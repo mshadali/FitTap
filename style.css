@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты проверки доступности</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 48px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+            word-break: break-all;
+        }
+
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .stat {
+            background: #edf2f7;
+            padding: 1rem 1.5rem;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .stat.bad {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .stat.good {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            color: #2d3748;
+        }
+
+        .issues-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .issues-table th {
+            background: #667eea;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .issues-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .issues-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .success {
+            background: #c6f6d5;
+            padding: 1rem;
+            border-radius: 24px;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .note {
+            color: #718096;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .result-card { padding: 1rem; }
+            .issues-table th, .issues-table td { padding: 0.5rem; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="result-card">
+            <a href="/" class="back-link">← На главную</a>
+            <h2>📊 Отчёт для <strong>{{ result.url }}</strong></h2>
+            <div class="stats">
+                <div class="stat">🔘 Всего кликабельных элементов: {{ result.total }}</div>
+                <div class="stat {{ 'bad' if result.small_count > 0 else 'good' }}">
+                    ⚠️ Элементов меньше 44×44 px: {{ result.small_count }}
+                </div>
+            </div>
+
+            {% if result.issues %}
+                <h3>❗ Список проблемных элементов:</h3>
+                <table class="issues-table">
+                    <thead>
+                        <tr><th>Тег</th><th>Текст / описание</th><th>Размер (px)</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for issue in result.issues %}
+                        <tr>
+                            <td><code>{{ issue.tag }}</code></td>
+                            <td>{{ issue.text }}</td>
+                            <td>{{ issue.width }}×{{ issue.height }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <p class="note">* Показаны первые 20 проблем. Норма WCAG: 44×44 пикселя (ширина и высота).</p>
+            {% else %}
+                <div class="success">✅ Поздравляем! Все кликабельные элементы имеют достаточный размер (≥44×44 px).</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
